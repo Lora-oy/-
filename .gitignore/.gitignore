@@ -1,0 +1,30 @@
+nerve=read.csv('nerve.txt',sep=' ')##导入数据
+X=na.omit(unlist(a))
+p_boots=function(X,p){
+##p分位数标准差函数，返回1000个重抽样得到的分位数
+  B=1000
+  n=20
+  TBoot=NULL
+  sd.nerve=NULL
+  for(i in 1:B){
+    xsample=sample(X,n,T)
+    Tboot=quantile(xsample,p)
+    TBoot=c(TBoot,Tboot)
+    sd.nerve=c(sd.nerve,sd(TBoot))
+  }
+  sd.p.nerve=sd(TBoot)
+  p.nerve=quantile(X,p)
+  l1=p.nerve+qnorm(0.025,0,1)*sd.p.nerve                
+  u1=p.nerve-qnorm(0.025,0.1)*sd.p.nerve
+  cat("分位数：",p,"\n","正态置信区间 ","[",l1,",",u1,"]","\n")
+  ##正态置信区间
+  l2=2*p.nerve-quantile(TBoot,0.975)
+  u2=2*p.nerve-quantile(TBoot,0.025)
+  cat("分位数：",p,"\n","枢轴量置信区间","[",l2,",",u2,"]","\n")
+  ##枢轴量置信区间
+  l3=quantile(TBoot,0.025,names = FALSE)
+  u3=quantile(TBoot,0.975,names = FALSE)
+  cat("分位数：",p,"\n","分位数置信区间","[",l3,",",u3,"]","\n")
+  ##分位数置信区间
+}
+p_boots(X,0.25)
